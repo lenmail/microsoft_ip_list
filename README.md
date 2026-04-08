@@ -2,46 +2,46 @@
 
 [![Microsoft Services IP-Lists](https://github.com/lenmail/microsoft_ip_list/actions/workflows/create_ms_service_ip_lists.yml/badge.svg)](https://github.com/lenmail/microsoft_ip_list/actions/workflows/create_ms_service_ip_lists.yml)
 
-Dieses Repository erzeugt aus offiziellen Herstellerquellen verwertbare IP- und URL-Listen fuer den operativen Einsatz in Firewalls, Proxys, ACLs und Change-Prozessen.
+This repository generates consumable IP and URL lists from official vendor sources for operational use in firewalls, proxies, ACLs, and change management processes.
 
-Die generierten Artefakte liegen unter `docs/` und werden ueber GitHub Pages veroeffentlicht:
+The generated artifacts are published under `docs/` and exposed through GitHub Pages:
 
 - Repository: <https://github.com/lenmail/microsoft_ip_list>
 - GitHub Pages: <https://lenmail.github.io/microsoft_ip_list/>
-- Index der generierten Listen: <https://lenmail.github.io/microsoft_ip_list/index.md>
+- Generated list index: <https://lenmail.github.io/microsoft_ip_list/index.md>
 
-## Datenquellen
+## Data Sources
 
-- Azure Service Tags fuer Public Cloud: <https://www.microsoft.com/en-us/download/details.aspx?id=56519>
+- Azure Service Tags for Public Cloud: <https://www.microsoft.com/en-us/download/details.aspx?id=56519>
 - Microsoft 365 IP Address and URL Web Service: <https://learn.microsoft.com/en-us/microsoft-365/enterprise/microsoft-365-ip-web-service?view=o365-worldwide>
 - Azure Service Tags Overview: <https://learn.microsoft.com/en-us/azure/virtual-network/service-tags-overview>
-- GitHub Meta API fuer offizielle GitHub-Netzbereiche: <https://api.github.com/meta>
-- GitHub Dokumentation zu IP-Adressen: <https://docs.github.com/en/github/authenticating-to-github/about-githubs-ip-addresses>
+- GitHub Meta API for official GitHub network ranges: <https://api.github.com/meta>
+- GitHub documentation for IP ranges: <https://docs.github.com/en/github/authenticating-to-github/about-githubs-ip-addresses>
 
-Die erzeugten Listen sind im Index in drei Quellfamilien gegliedert:
+The generated lists are grouped in the index into three source families:
 
 - GitHub
 - Azure Service Tags
 - Microsoft 365 Endpoints
 
-## Betriebsmodell
+## Operating Model
 
-- `generate_list_azure.sh` zieht die aktuelle Azure-Service-Tags-JSON aus dem Microsoft Download Center und schreibt pro Service Tag eine eigene Datei nach `docs/azure/`.
-- `generate_list_github.py` liest die offizielle GitHub-Meta-API aus und erzeugt daraus `docs/github.txt`.
-- `generate_list_o365.py` fragt den Microsoft-365-Webservice ab und erzeugt portbasierte IP-Listen sowie die URL-Liste unter `docs/o365/`.
-- `generate_docs_index.py` erstellt `docs/index.md` und den Zeitstempel in `docs/generated.txt`.
-- Der GitHub Actions Workflow fuehrt die Generierung taeglich sowie bei Push und manueller Ausloesung aus und committed nur bei echten Aenderungen.
+- `generate_list_azure.sh` downloads the current Azure Service Tags JSON from the Microsoft Download Center and writes one file per service tag to `docs/azure/`.
+- `generate_list_github.py` reads the official GitHub Meta API and generates `docs/github.txt`.
+- `generate_list_o365.py` queries the Microsoft 365 web service and generates port-based IP lists plus the URL list under `docs/o365/`.
+- `generate_docs_index.py` builds `docs/index.md` and writes the generation timestamp to `docs/generated.txt`.
+- The GitHub Actions workflow runs the generation daily, on push, and on manual dispatch, and commits only when there are real content changes.
 
-## Lokale Ausfuehrung
+## Local Execution
 
-Voraussetzungen:
+Requirements:
 
 - `bash`
 - `curl`
 - `jq`
 - `python3`
 
-Aus dem Repo-Root:
+From the repository root:
 
 ```bash
 ./generate_list_azure.sh
@@ -50,12 +50,12 @@ python3 ./generate_list_o365.py
 python3 ./generate_docs_index.py
 ```
 
-Falls du die Ergebnisse anschliessend als Service oder per Cron uebernehmen willst, sollten die erzeugten Dateien immer als Build-Artefakt oder Git-Commit versioniert und in den Firewall-Change-Prozess eingebunden werden.
+If you consume the generated outputs through a service or cron-based downstream process, the resulting files should always be versioned as build artifacts or Git commits and integrated into the firewall change workflow.
 
-## Hinweise fuer Betrieb und Architektur
+## Operational Notes
 
-- Azure Service Tags werden laut Microsoft woechentlich veroeffentlicht. Eine taegliche Pruefung ist betrieblich unkritisch und erkennt neue Versionen frueh.
-- GitHub weist darauf hin, dass `api.github.com/meta` nicht jede moegliche GitHub-IP fuer jeden Dienst vollstaendig abdeckt. Fuer `docs/github.txt` wird deshalb bewusst die offizielle GitHub-Meta-Quelle aggregiert, nicht eine abgeleitete Azure-Hilfsliste.
-- Der Microsoft-365-Webservice liefert versionierte Endpoint-Daten. Das Skript schreibt nur dann neue Listen, wenn Microsoft eine neue Version publiziert hat.
-- Die Listen sind bewusst nach Service Tag und Port-Gruppen aufgeteilt, damit Downstream-Systeme selektiv konsumieren koennen.
-- Fuer sicherheitskritische Freigaben sollten IP-Listen nie isoliert betrachtet werden. Microsoft empfiehlt fuer Azure nach Moeglichkeit Service Tags und fuer Microsoft 365 die Kombination aus URLs, Ports und Change-Prozess. Fuer GitHub ist die Meta-API die offizielle Referenz, aber kein Ersatz fuer einen eigenen Review auf Dienstebene.
+- According to Microsoft, Azure Service Tags are published weekly. A daily check is operationally safe and detects new releases early.
+- GitHub states that `api.github.com/meta` does not cover every possible GitHub IP for every service. `docs/github.txt` therefore intentionally aggregates the official GitHub Meta source, not a derived Azure helper list.
+- The Microsoft 365 web service provides versioned endpoint data. The script rewrites the lists on every run for consistency, but only updates the stored version state when Microsoft publishes a newer version.
+- The lists are deliberately split by service tag and port group so downstream systems can consume them selectively.
+- For security-sensitive allowlisting, IP lists should never be treated in isolation. Microsoft recommends using service tags where possible for Azure and using URLs, ports, and a managed change process for Microsoft 365. For GitHub, the Meta API is the official reference point, but not a substitute for a service-level review.

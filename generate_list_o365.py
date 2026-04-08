@@ -104,15 +104,15 @@ def main() -> None:
     endpoint_sets = web_api_get("endpoints", INSTANCE, client_request_id)
 
     if version["latest"] > latest_version:
-        print('Neue Version der "Office 365 worldwide commercial service instance endpoints" gefunden')
+        print('New version of the "Office 365 worldwide commercial service instance endpoints" detected')
         write_version_state(client_request_id, version["latest"])
     else:
-        print("Keine neue Version gefunden, vorhandene Listen werden neu geschrieben.")
+        print("No new version detected, rewriting the existing lists for consistency.")
 
     write_ip_lists(endpoint_sets)
     write_url_list(endpoint_sets)
 
-    print("Neue Listen erzeugt!")
+    print("Updated lists generated.")
 
 
 if __name__ == "__main__":
