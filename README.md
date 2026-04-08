@@ -28,7 +28,6 @@ The generated lists are grouped in the index into three source families:
 ## Operating Model
 
 - `generate_lists.py` is the canonical entry point and contains the shared implementation for Azure, GitHub, Microsoft 365, aggregate lists, and the generated index.
-- `generate_list_azure.sh`, `generate_list_github.py`, `generate_list_o365.py`, `generate_aggregate_lists.py`, and `generate_docs_index.py` remain as thin compatibility wrappers around `generate_lists.py`.
 - The GitHub Actions workflow runs the generation daily, on push, and on manual dispatch, and commits only when there are real content changes.
 
 ## Local Execution
@@ -52,8 +51,6 @@ python3 ./generate_lists.py o365
 python3 ./generate_lists.py aggregate
 python3 ./generate_lists.py index
 ```
-
-Legacy wrapper scripts remain available for backward compatibility, but the consolidated `generate_lists.py` entry point is the preferred interface.
 
 If you consume the generated outputs through a service or cron-based downstream process, the resulting files should always be versioned as build artifacts or Git commits and integrated into the firewall change workflow.
 
