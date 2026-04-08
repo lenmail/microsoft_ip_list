@@ -39,9 +39,8 @@ def main() -> None:
     lines = [
         "# Microsoft Service Endpoint Lists",
         "",
-        f"Generated: {generated_at}",
-        "",
         "This index is generated from the current repository content.",
+        "The transient generation timestamp is written to `docs/generated.txt` during each run and is not tracked in Git.",
     ]
 
     for heading, files in sections:

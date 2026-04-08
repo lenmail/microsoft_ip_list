@@ -1,8 +1,7 @@
 # Microsoft Service Endpoint Lists
 
-Generated: 2026-04-08 19:37:20 UTC
-
 This index is generated from the current repository content.
+The transient generation timestamp is written to `docs/generated.txt` during each run and is not tracked in Git.
 
 ## Static
 
