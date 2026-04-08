@@ -7,6 +7,15 @@ The transient generation timestamp is written to `docs/generated.txt` during eac
 
 * [github.txt](github.txt)
 
+## Aggregate Lists
+
+* [aggregate/all_ipv4.txt](aggregate/all_ipv4.txt)
+* [aggregate/all_ipv6.txt](aggregate/all_ipv6.txt)
+* [aggregate/tcp_ipv4.txt](aggregate/tcp_ipv4.txt)
+* [aggregate/tcp_ipv6.txt](aggregate/tcp_ipv6.txt)
+* [aggregate/udp_ipv4.txt](aggregate/udp_ipv4.txt)
+* [aggregate/udp_ipv6.txt](aggregate/udp_ipv6.txt)
+
 ## Azure Service Tags
 
 * [azure/ActionGroup.txt](azure/ActionGroup.txt)

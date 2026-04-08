@@ -28,11 +28,12 @@ jobs:
 
       - name: Generate endpoint lists
         run: |
-          mkdir -p docs/{azure,o365}
+          mkdir -p docs/{aggregate,azure,o365}
           chmod 755 ./generate_list_azure.sh
           ./generate_list_azure.sh
           python3 ./generate_list_github.py
           python3 ./generate_list_o365.py
+          python3 ./generate_aggregate_lists.py
           python3 ./generate_docs_index.py
 
       - name: Commit generated content

@@ -32,6 +32,7 @@ def main() -> None:
 
     sections = [
         ("GitHub", [DOCS_DIR / "github.txt"]),
+        ("Aggregate Lists", iter_files(DOCS_DIR / "aggregate")),
         ("Azure Service Tags", iter_files(DOCS_DIR / "azure")),
         ("Microsoft 365 Endpoints", iter_files(DOCS_DIR / "o365")),
     ]
