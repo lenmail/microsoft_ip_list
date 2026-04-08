@@ -1,6 +1,6 @@
 # Microsoft Service Endpoint Lists
 
-Generated: 2026-04-08 19:34:34 UTC
+Generated: 2026-04-08 19:36:13 UTC
 
 This index is generated from the current repository content.
 
