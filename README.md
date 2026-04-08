@@ -30,7 +30,7 @@ The generated lists are grouped in the index into three source families:
 - `generate_list_azure.sh` downloads the current Azure Service Tags JSON from the Microsoft Download Center and writes one file per service tag to `docs/azure/`.
 - `generate_list_github.py` reads the official GitHub Meta API and generates `docs/github.txt`.
 - `generate_list_o365.py` queries the Microsoft 365 web service and generates port-based IP lists plus the URL list under `docs/o365/`.
-- `generate_aggregate_lists.py` builds firewall- and proxy-friendly aggregate lists under `docs/aggregate/` for IPv4, IPv6, TCP, and UDP consumption.
+- `generate_aggregate_lists.py` builds firewall- and proxy-friendly aggregate lists under `docs/aggregate/` for IPv4, IPv6, TCP, and UDP consumption and collapses overlapping CIDR ranges to keep the outputs compact.
 - `generate_docs_index.py` builds `docs/index.md` and writes the generation timestamp to `docs/generated.txt`.
 - The GitHub Actions workflow runs the generation daily, on push, and on manual dispatch, and commits only when there are real content changes.
 
@@ -61,5 +61,5 @@ If you consume the generated outputs through a service or cron-based downstream 
 - GitHub states that `api.github.com/meta` does not cover every possible GitHub IP for every service. `docs/github.txt` therefore intentionally aggregates the official GitHub Meta source, not a derived Azure helper list.
 - The Microsoft 365 web service provides versioned endpoint data. The script rewrites the lists on every run for consistency, but only updates the stored version state when Microsoft publishes a newer version.
 - The lists are deliberately split by service tag and port group so downstream systems can consume them selectively.
-- The aggregate lists are intended for downstream automation such as firewall or proxy allowlists. `all_*` combines all known ranges, `tcp_*` combines protocol-agnostic sources plus Microsoft 365 TCP ranges, and `udp_*` only includes sources with explicit UDP semantics from Microsoft 365.
+- The aggregate lists are intended for downstream automation such as firewall or proxy allowlists. `all_*` combines all known ranges, `tcp_*` combines protocol-agnostic sources plus Microsoft 365 TCP ranges, and `udp_*` only includes sources with explicit UDP semantics from Microsoft 365. All aggregate outputs are CIDR-collapsed before they are written.
 - For security-sensitive allowlisting, IP lists should never be treated in isolation. Microsoft recommends using service tags where possible for Azure and using URLs, ports, and a managed change process for Microsoft 365. For GitHub, the Meta API is the official reference point, but not a substitute for a service-level review.

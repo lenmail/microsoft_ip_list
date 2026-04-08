@@ -13,54 +13,43 @@ O365_DIR = DOCS_DIR / "o365"
 GITHUB_FILE = DOCS_DIR / "github.txt"
 
 
-def read_networks(file_path: Path) -> set[str]:
+def read_networks(file_path: Path) -> set[ipaddress._BaseNetwork]:
     if not file_path.exists():
         return set()
 
-    networks: set[str] = set()
+    networks: set[ipaddress._BaseNetwork] = set()
     for line in file_path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line:
             continue
-        ipaddress.ip_network(line, strict=False)
-        networks.add(line)
+        networks.add(ipaddress.ip_network(line, strict=False))
     return networks
 
 
-def split_ip_versions(networks: set[str]) -> tuple[list[str], list[str]]:
-    ipv4: list[str] = []
-    ipv6: list[str] = []
-
-    for network in sorted(networks, key=sort_key):
-        parsed = ipaddress.ip_network(network, strict=False)
-        if parsed.version == 4:
-            ipv4.append(network)
-        else:
-            ipv6.append(network)
-
-    return ipv4, ipv6
+def sort_key(network: ipaddress._BaseNetwork) -> tuple[int, int, int, str]:
+    return (network.version, int(network.network_address), network.prefixlen, str(network))
 
 
-def sort_key(network: str) -> tuple[int, int, int, str]:
-    parsed = ipaddress.ip_network(network, strict=False)
-    return (parsed.version, int(parsed.network_address), parsed.prefixlen, network)
+def collapse_networks(networks: set[ipaddress._BaseNetwork], version: int) -> list[ipaddress._BaseNetwork]:
+    filtered = [network for network in networks if network.version == version]
+    return sorted(ipaddress.collapse_addresses(filtered), key=sort_key)
 
 
-def write_networks(file_path: Path, networks: set[str]) -> None:
-    ipv4, ipv6 = split_ip_versions(networks)
-    combined = ipv4 if file_path.stem.endswith("ipv4") else ipv6
-    file_path.write_text("".join(f"{network}\n" for network in combined), encoding="utf-8")
+def write_networks(file_path: Path, networks: set[ipaddress._BaseNetwork]) -> None:
+    version = 4 if file_path.stem.endswith("ipv4") else 6
+    collapsed = collapse_networks(networks, version)
+    file_path.write_text("".join(f"{network}\n" for network in collapsed), encoding="utf-8")
 
 
-def collect_azure_networks() -> set[str]:
-    networks: set[str] = set()
+def collect_azure_networks() -> set[ipaddress._BaseNetwork]:
+    networks: set[ipaddress._BaseNetwork] = set()
     for file_path in AZURE_DIR.glob("*.txt"):
         networks.update(read_networks(file_path))
     return networks
 
 
-def collect_o365_networks(pattern: str) -> set[str]:
-    networks: set[str] = set()
+def collect_o365_networks(pattern: str) -> set[ipaddress._BaseNetwork]:
+    networks: set[ipaddress._BaseNetwork] = set()
     for file_path in O365_DIR.glob(pattern):
         networks.update(read_networks(file_path))
     return networks
