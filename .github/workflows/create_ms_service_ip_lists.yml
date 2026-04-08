@@ -29,12 +29,7 @@ jobs:
       - name: Generate endpoint lists
         run: |
           mkdir -p docs/{aggregate,azure,o365}
-          chmod 755 ./generate_list_azure.sh
-          ./generate_list_azure.sh
-          python3 ./generate_list_github.py
-          python3 ./generate_list_o365.py
-          python3 ./generate_aggregate_lists.py
-          python3 ./generate_docs_index.py
+          python3 ./generate_lists.py all
 
       - name: Commit generated content
         if: github.event_name != 'pull_request'

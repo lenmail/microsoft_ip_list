@@ -27,31 +27,33 @@ The generated lists are grouped in the index into three source families:
 
 ## Operating Model
 
-- `generate_list_azure.sh` downloads the current Azure Service Tags JSON from the Microsoft Download Center and writes one file per service tag to `docs/azure/`.
-- `generate_list_github.py` reads the official GitHub Meta API and generates `docs/github.txt`.
-- `generate_list_o365.py` queries the Microsoft 365 web service and generates port-based IP lists plus the URL list under `docs/o365/`.
-- `generate_aggregate_lists.py` builds firewall- and proxy-friendly aggregate lists under `docs/aggregate/` for IPv4, IPv6, TCP, and UDP consumption and collapses overlapping CIDR ranges to keep the outputs compact.
-- `generate_docs_index.py` builds `docs/index.md` and writes the generation timestamp to `docs/generated.txt`.
+- `generate_lists.py` is the canonical entry point and contains the shared implementation for Azure, GitHub, Microsoft 365, aggregate lists, and the generated index.
+- `generate_list_azure.sh`, `generate_list_github.py`, `generate_list_o365.py`, `generate_aggregate_lists.py`, and `generate_docs_index.py` remain as thin compatibility wrappers around `generate_lists.py`.
 - The GitHub Actions workflow runs the generation daily, on push, and on manual dispatch, and commits only when there are real content changes.
 
 ## Local Execution
 
 Requirements:
 
-- `bash`
-- `curl`
-- `jq`
 - `python3`
 
 From the repository root:
 
 ```bash
-./generate_list_azure.sh
-python3 ./generate_list_github.py
-python3 ./generate_list_o365.py
-python3 ./generate_aggregate_lists.py
-python3 ./generate_docs_index.py
+python3 ./generate_lists.py all
 ```
+
+Individual scopes can still be generated separately:
+
+```bash
+python3 ./generate_lists.py azure
+python3 ./generate_lists.py github
+python3 ./generate_lists.py o365
+python3 ./generate_lists.py aggregate
+python3 ./generate_lists.py index
+```
+
+Legacy wrapper scripts remain available for backward compatibility, but the consolidated `generate_lists.py` entry point is the preferred interface.
 
 If you consume the generated outputs through a service or cron-based downstream process, the resulting files should always be versioned as build artifacts or Git commits and integrated into the firewall change workflow.
 
