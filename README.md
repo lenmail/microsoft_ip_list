@@ -15,10 +15,13 @@ Die generierten Artefakte liegen unter `docs/` und werden ueber GitHub Pages ver
 - Azure Service Tags fuer Public Cloud: <https://www.microsoft.com/en-us/download/details.aspx?id=56519>
 - Microsoft 365 IP Address and URL Web Service: <https://learn.microsoft.com/en-us/microsoft-365/enterprise/microsoft-365-ip-web-service?view=o365-worldwide>
 - Azure Service Tags Overview: <https://learn.microsoft.com/en-us/azure/virtual-network/service-tags-overview>
+- GitHub Meta API fuer offizielle GitHub-Netzbereiche: <https://api.github.com/meta>
+- GitHub Dokumentation zu IP-Adressen: <https://docs.github.com/en/github/authenticating-to-github/about-githubs-ip-addresses>
 
 ## Betriebsmodell
 
 - `generate_list_azure.sh` zieht die aktuelle Azure-Service-Tags-JSON aus dem Microsoft Download Center und schreibt pro Service Tag eine eigene Datei nach `docs/azure/`.
+- `generate_list_github.py` liest die offizielle GitHub-Meta-API aus und erzeugt daraus `docs/github.txt`.
 - `generate_list_o365.py` fragt den Microsoft-365-Webservice ab und erzeugt portbasierte IP-Listen sowie die URL-Liste unter `docs/o365/`.
 - `generate_docs_index.py` erstellt `docs/index.md` und den Zeitstempel in `docs/generated.txt`.
 - Der GitHub Actions Workflow fuehrt die Generierung taeglich sowie bei Push und manueller Ausloesung aus und committed nur bei echten Aenderungen.
@@ -36,6 +39,7 @@ Aus dem Repo-Root:
 
 ```bash
 ./generate_list_azure.sh
+python3 ./generate_list_github.py
 python3 ./generate_list_o365.py
 python3 ./generate_docs_index.py
 ```
@@ -45,6 +49,7 @@ Falls du die Ergebnisse anschliessend als Service oder per Cron uebernehmen will
 ## Hinweise fuer Betrieb und Architektur
 
 - Azure Service Tags werden laut Microsoft woechentlich veroeffentlicht. Eine taegliche Pruefung ist betrieblich unkritisch und erkennt neue Versionen frueh.
+- GitHub weist darauf hin, dass `api.github.com/meta` nicht jede moegliche GitHub-IP fuer jeden Dienst vollstaendig abdeckt. Fuer `docs/github.txt` wird deshalb bewusst die offizielle GitHub-Meta-Quelle aggregiert, nicht eine abgeleitete Azure-Hilfsliste.
 - Der Microsoft-365-Webservice liefert versionierte Endpoint-Daten. Das Skript schreibt nur dann neue Listen, wenn Microsoft eine neue Version publiziert hat.
 - Die Listen sind bewusst nach Service Tag und Port-Gruppen aufgeteilt, damit Downstream-Systeme selektiv konsumieren koennen.
 - Fuer sicherheitskritische Freigaben sollten IP-Listen nie isoliert betrachtet werden. Microsoft empfiehlt fuer Azure nach Moeglichkeit Service Tags und fuer Microsoft 365 die Kombination aus URLs, Ports und Change-Prozess.
