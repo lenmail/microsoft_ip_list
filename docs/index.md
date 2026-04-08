@@ -1,6 +1,12 @@
 # Microsoft Service Endpoint Lists
 
+<<<<<<< HEAD
 Generated: 2026-04-08 19:31:10 UTC
+||||||| parent of dcb19ad (fix: sanitize Microsoft 365 output filenames)
+Generated: 2026-04-08 19:28:00 UTC
+=======
+Generated: 2026-04-08 19:32:35 UTC
+>>>>>>> dcb19ad (fix: sanitize Microsoft 365 output filenames)
 
 This index is generated from the current repository content.
 
@@ -118,11 +124,10 @@ This index is generated from the current repository content.
 
 ## Microsoft 365 Endpoints
 
-* [o365/endpoints_clientid_latestversion.txt](o365/endpoints_clientid_latestversion.txt)
-* [o365/tcp_143, 587, 993, 995.txt](o365/tcp_143%2C%20587%2C%20993%2C%20995.txt)
+* [o365/tcp_143_587_993_995.txt](o365/tcp_143_587_993_995.txt)
 * [o365/tcp_25.txt](o365/tcp_25.txt)
 * [o365/tcp_443.txt](o365/tcp_443.txt)
-* [o365/tcp_80,443.txt](o365/tcp_80%2C443.txt)
-* [o365/tcp_80,443udp_443.txt](o365/tcp_80%2C443udp_443.txt)
-* [o365/udp_3478,3479,3480,3481.txt](o365/udp_3478%2C3479%2C3480%2C3481.txt)
+* [o365/tcp_80_443.txt](o365/tcp_80_443.txt)
+* [o365/tcp_80_443_udp_443.txt](o365/tcp_80_443_udp_443.txt)
+* [o365/udp_3478_3479_3480_3481.txt](o365/udp_3478_3479_3480_3481.txt)
 * [o365/url.txt](o365/url.txt)

@@ -14,7 +14,11 @@ INDEX_FILE = DOCS_DIR / "index.md"
 
 
 def iter_files(directory: Path) -> list[Path]:
-    return sorted(path for path in directory.rglob("*") if path.is_file())
+    return sorted(
+        path
+        for path in directory.rglob("*")
+        if path.is_file() and path.name != "endpoints_clientid_latestversion.txt"
+    )
 
 
 def format_link(path: Path) -> str:

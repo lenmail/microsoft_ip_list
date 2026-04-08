@@ -38,7 +38,6 @@ office.live.com
 outlook.cloud.microsoft
 outlook.office.com
 outlook.office365.com
-outlook.office365.com
 passwordreset.microsoftonline.com
 protection.office.com
 provisioningapi.microsoftonline.com

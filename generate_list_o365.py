@@ -46,6 +46,10 @@ def reset_port_files() -> None:
             file_path.unlink()
 
 
+def normalize_port_group(ports: str) -> str:
+    return "_".join(part.strip() for part in ports.split(",") if part.strip())
+
+
 def write_ip_lists(endpoint_sets: list[dict]) -> None:
     grouped_ips: dict[str, set[str]] = defaultdict(set)
 
@@ -58,9 +62,9 @@ def write_ip_lists(endpoint_sets: list[dict]) -> None:
         file_name = ""
 
         if tcp_ports:
-            file_name += f"tcp_{tcp_ports}"
+            file_name += f"tcp_{normalize_port_group(tcp_ports)}"
         if udp_ports:
-            file_name += f"udp_{udp_ports}"
+            file_name += f"_udp_{normalize_port_group(udp_ports)}" if file_name else f"udp_{normalize_port_group(udp_ports)}"
         if not file_name:
             continue
 
@@ -97,15 +101,14 @@ def main() -> None:
 
     client_request_id, latest_version = load_version_state()
     version = web_api_get("version", INSTANCE, client_request_id)
-
-    if version["latest"] <= latest_version:
-        print("Keine neue Version gefunden!")
-        return
-
-    print('Neue Version der "Office 365 worldwide commercial service instance endpoints" gefunden')
-    write_version_state(client_request_id, version["latest"])
-
     endpoint_sets = web_api_get("endpoints", INSTANCE, client_request_id)
+
+    if version["latest"] > latest_version:
+        print('Neue Version der "Office 365 worldwide commercial service instance endpoints" gefunden')
+        write_version_state(client_request_id, version["latest"])
+    else:
+        print("Keine neue Version gefunden, vorhandene Listen werden neu geschrieben.")
+
     write_ip_lists(endpoint_sets)
     write_url_list(endpoint_sets)
 
