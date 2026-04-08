@@ -1,27 +1,48 @@
-#!/bin/bash
-MICROSOFT_IP_RANGES_URL="https://www.microsoft.com/en-us/download/confirmation.aspx?id=56519"
-MICROSOFT_IP_RANGES_URL_FINAL=$(curl -Lfs "${MICROSOFT_IP_RANGES_URL}" | grep -Eoi '<a [^>]+>' | grep -Eo 'href="[^\"]+"' | grep "download.microsoft.com/download/" | grep -m 1 -Eo '(http|https)://[^"]+')
-DL_PATH=/tmp/azure
-tmp=$(mktemp)
+#!/usr/bin/env bash
+set -euo pipefail
 
-# create dl path
-mkdir $DL_PATH $FINAL_PATH
+MICROSOFT_IP_RANGES_URL="https://www.microsoft.com/en-us/download/details.aspx?id=56519"
+DOCS_DIR="docs/azure"
+WORK_DIR="$(mktemp -d)"
+JSON_FILE="${WORK_DIR}/service_tags.json"
 
-# get list
-curl -s -o $tmp $MICROSOFT_IP_RANGES_URL_FINAL
+cleanup() {
+  rm -rf "${WORK_DIR}"
+}
 
-# get names and create ip lists
-jq -r '.values[] | select (.properties.region == "" ) | .name' $tmp | sort -u | while read name; do
-  jq -r '.values[] | select (.name == '\"$name\"' ) | .properties.addressPrefixes[]' $tmp >> $DL_PATH/"$name"_new
-  if [ "$(wc -l < $DL_PATH/"$name"_new)" -eq "0" ]; then
-    #need to change to monitoring things
-        echo "$name has a problem" >&2
+trap cleanup EXIT
+
+mkdir -p "${DOCS_DIR}"
+
+download_url="$(
+  curl -fsSL "${MICROSOFT_IP_RANGES_URL}" \
+    | grep -Eo 'https://download\.microsoft\.com/download/[^"]+ServiceTags_Public_[0-9]+\.json' \
+    | head -n 1
+)"
+
+if [ -z "${download_url}" ]; then
+  echo "Could not determine the current Azure Service Tags download URL." >&2
+  exit 1
+fi
+
+curl -fsSL "${download_url}" -o "${JSON_FILE}"
+
+jq -r '.values[] | select(.properties.region == "") | .name' "${JSON_FILE}" \
+  | sort -u \
+  | while IFS= read -r name; do
+      output_file="${DOCS_DIR}/${name}.txt"
+      tmp_output="${WORK_DIR}/${name}.txt"
+
+      jq -r --arg name "${name}" '
+        .values[]
+        | select(.name == $name)
+        | .properties.addressPrefixes[]
+      ' "${JSON_FILE}" | sort -u > "${tmp_output}"
+
+      if [ ! -s "${tmp_output}" ]; then
+        echo "No address prefixes found for ${name}." >&2
         continue
-    fi
-    sort -u -o docs/azure/"$name".txt $DL_PATH/"$name"_new
-    rm -f $DL_PATH/"$name"_new
-done
+      fi
 
-# remove tmp
-rm -f $tmp
-rm -rf $DL_PATH
+      mv "${tmp_output}" "${output_file}"
+    done

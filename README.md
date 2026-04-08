@@ -1,7 +1,50 @@
-# Office365 and Azure IP-List
+# Microsoft Service Endpoint Lists
 
-[![Microsoft Services IP-Lists](https://github.com/pubcont/microsoft_ip_list/actions/workflows/create_ms_service_ip_lists.yml/badge.svg)](https://github.com/pubcont/microsoft_ip_list/actions/workflows/create_ms_service_ip_lists.yml)
+[![Microsoft Services IP-Lists](https://github.com/lenmail/microsoft_ip_list/actions/workflows/create_ms_service_ip_lists.yml/badge.svg)](https://github.com/lenmail/microsoft_ip_list/actions/workflows/create_ms_service_ip_lists.yml)
 
-Github Page https://pubcont.github.io/microsoft_ip_list/
+Dieses Repository erzeugt aus den offiziellen Microsoft-Quellen verwertbare IP- und URL-Listen fuer den operativen Einsatz in Firewalls, Proxys, ACLs und Change-Prozessen.
 
-This repository generates an ip-list for o365 and azure service endpoints.
+Die generierten Artefakte liegen unter `docs/` und werden ueber GitHub Pages veroeffentlicht:
+
+- Repository: <https://github.com/lenmail/microsoft_ip_list>
+- GitHub Pages: <https://lenmail.github.io/microsoft_ip_list/>
+- Index der generierten Listen: <https://lenmail.github.io/microsoft_ip_list/index.md>
+
+## Datenquellen
+
+- Azure Service Tags fuer Public Cloud: <https://www.microsoft.com/en-us/download/details.aspx?id=56519>
+- Microsoft 365 IP Address and URL Web Service: <https://learn.microsoft.com/en-us/microsoft-365/enterprise/microsoft-365-ip-web-service?view=o365-worldwide>
+- Azure Service Tags Overview: <https://learn.microsoft.com/en-us/azure/virtual-network/service-tags-overview>
+
+## Betriebsmodell
+
+- `generate_list_azure.sh` zieht die aktuelle Azure-Service-Tags-JSON aus dem Microsoft Download Center und schreibt pro Service Tag eine eigene Datei nach `docs/azure/`.
+- `generate_list_o365.py` fragt den Microsoft-365-Webservice ab und erzeugt portbasierte IP-Listen sowie die URL-Liste unter `docs/o365/`.
+- `generate_docs_index.py` erstellt `docs/index.md` und den Zeitstempel in `docs/generated.txt`.
+- Der GitHub Actions Workflow fuehrt die Generierung taeglich sowie bei Push und manueller Ausloesung aus und committed nur bei echten Aenderungen.
+
+## Lokale Ausfuehrung
+
+Voraussetzungen:
+
+- `bash`
+- `curl`
+- `jq`
+- `python3`
+
+Aus dem Repo-Root:
+
+```bash
+./generate_list_azure.sh
+python3 ./generate_list_o365.py
+python3 ./generate_docs_index.py
+```
+
+Falls du die Ergebnisse anschliessend als Service oder per Cron uebernehmen willst, sollten die erzeugten Dateien immer als Build-Artefakt oder Git-Commit versioniert und in den Firewall-Change-Prozess eingebunden werden.
+
+## Hinweise fuer Betrieb und Architektur
+
+- Azure Service Tags werden laut Microsoft woechentlich veroeffentlicht. Eine taegliche Pruefung ist betrieblich unkritisch und erkennt neue Versionen frueh.
+- Der Microsoft-365-Webservice liefert versionierte Endpoint-Daten. Das Skript schreibt nur dann neue Listen, wenn Microsoft eine neue Version publiziert hat.
+- Die Listen sind bewusst nach Service Tag und Port-Gruppen aufgeteilt, damit Downstream-Systeme selektiv konsumieren koennen.
+- Fuer sicherheitskritische Freigaben sollten IP-Listen nie isoliert betrachtet werden. Microsoft empfiehlt fuer Azure nach Moeglichkeit Service Tags und fuer Microsoft 365 die Kombination aus URLs, Ports und Change-Prozess.

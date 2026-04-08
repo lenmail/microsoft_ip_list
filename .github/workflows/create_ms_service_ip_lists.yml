@@ -11,38 +11,35 @@ on:
     - cron: '30 5 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   generate_lists:
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: checkout repositoriy
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          ref: 'main'
-      - name: setup python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-      - name: run parts
+          python-version: '3.12'
+
+      - name: Generate endpoint lists
         run: |
-          # create directorys
           mkdir -p docs/{azure,o365}
-          # change execute persmissions
-          chmod 755 ./generate_list_*.sh
-          # execute script for azure
+          chmod 755 ./generate_list_azure.sh ./generate_docs_index.py ./generate_list_o365.py
           ./generate_list_azure.sh
-          # execute script for python
-          python3.8 ./generate_list_o365.py
-          # Create generated.txt
-          date > docs/generated.txt
-          # Create index.md
-          echo -e "# IP-List for Azure and O365\n\nGenerated: $(cat docs/generated.txt)\n\n* [github.txt](github.txt)\n$(for line in $(find docs/ -mindepth 2 -maxdepth 2| sed 's/\docs\///'); do echo "* [$line]($line)"; done)" > docs/index.md
-          # Commit content
+          python3 ./generate_list_o365.py
+          python3 ./generate_docs_index.py
+
+      - name: Commit generated content
+        if: github.event_name != 'pull_request'
+        run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add -A
-          git commit -m "generated"
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: refresh generated Microsoft endpoint lists"
           git push
-
-
