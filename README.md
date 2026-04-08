@@ -2,7 +2,7 @@
 
 [![Microsoft Services IP-Lists](https://github.com/lenmail/microsoft_ip_list/actions/workflows/create_ms_service_ip_lists.yml/badge.svg)](https://github.com/lenmail/microsoft_ip_list/actions/workflows/create_ms_service_ip_lists.yml)
 
-Dieses Repository erzeugt aus den offiziellen Microsoft-Quellen verwertbare IP- und URL-Listen fuer den operativen Einsatz in Firewalls, Proxys, ACLs und Change-Prozessen.
+Dieses Repository erzeugt aus offiziellen Herstellerquellen verwertbare IP- und URL-Listen fuer den operativen Einsatz in Firewalls, Proxys, ACLs und Change-Prozessen.
 
 Die generierten Artefakte liegen unter `docs/` und werden ueber GitHub Pages veroeffentlicht:
 
@@ -17,6 +17,12 @@ Die generierten Artefakte liegen unter `docs/` und werden ueber GitHub Pages ver
 - Azure Service Tags Overview: <https://learn.microsoft.com/en-us/azure/virtual-network/service-tags-overview>
 - GitHub Meta API fuer offizielle GitHub-Netzbereiche: <https://api.github.com/meta>
 - GitHub Dokumentation zu IP-Adressen: <https://docs.github.com/en/github/authenticating-to-github/about-githubs-ip-addresses>
+
+Die erzeugten Listen sind im Index in drei Quellfamilien gegliedert:
+
+- GitHub
+- Azure Service Tags
+- Microsoft 365 Endpoints
 
 ## Betriebsmodell
 
@@ -52,4 +58,4 @@ Falls du die Ergebnisse anschliessend als Service oder per Cron uebernehmen will
 - GitHub weist darauf hin, dass `api.github.com/meta` nicht jede moegliche GitHub-IP fuer jeden Dienst vollstaendig abdeckt. Fuer `docs/github.txt` wird deshalb bewusst die offizielle GitHub-Meta-Quelle aggregiert, nicht eine abgeleitete Azure-Hilfsliste.
 - Der Microsoft-365-Webservice liefert versionierte Endpoint-Daten. Das Skript schreibt nur dann neue Listen, wenn Microsoft eine neue Version publiziert hat.
 - Die Listen sind bewusst nach Service Tag und Port-Gruppen aufgeteilt, damit Downstream-Systeme selektiv konsumieren koennen.
-- Fuer sicherheitskritische Freigaben sollten IP-Listen nie isoliert betrachtet werden. Microsoft empfiehlt fuer Azure nach Moeglichkeit Service Tags und fuer Microsoft 365 die Kombination aus URLs, Ports und Change-Prozess.
+- Fuer sicherheitskritische Freigaben sollten IP-Listen nie isoliert betrachtet werden. Microsoft empfiehlt fuer Azure nach Moeglichkeit Service Tags und fuer Microsoft 365 die Kombination aus URLs, Ports und Change-Prozess. Fuer GitHub ist die Meta-API die offizielle Referenz, aber kein Ersatz fuer einen eigenen Review auf Dienstebene.
