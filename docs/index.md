@@ -1,12 +1,6 @@
 # Microsoft Service Endpoint Lists
 
-<<<<<<< HEAD
-Generated: 2026-04-08 19:31:10 UTC
-||||||| parent of dcb19ad (fix: sanitize Microsoft 365 output filenames)
-Generated: 2026-04-08 19:28:00 UTC
-=======
 Generated: 2026-04-08 19:32:35 UTC
->>>>>>> dcb19ad (fix: sanitize Microsoft 365 output filenames)
 
 This index is generated from the current repository content.
 
