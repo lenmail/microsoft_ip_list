@@ -3,7 +3,7 @@
 This index is generated from the current repository content.
 The transient generation timestamp is written to `docs/generated.txt` during each run and is not tracked in Git.
 
-## Static
+## GitHub
 
 * [github.txt](github.txt)
 

@@ -31,7 +31,7 @@ def main() -> None:
     GENERATED_FILE.write_text(f"{generated_at}\n", encoding="utf-8")
 
     sections = [
-        ("Static", [DOCS_DIR / "github.txt"]),
+        ("GitHub", [DOCS_DIR / "github.txt"]),
         ("Azure Service Tags", iter_files(DOCS_DIR / "azure")),
         ("Microsoft 365 Endpoints", iter_files(DOCS_DIR / "o365")),
     ]
